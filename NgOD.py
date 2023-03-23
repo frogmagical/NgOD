@@ -65,42 +65,46 @@ def lambda_handler(event, context):
                             * あめは、会話において敬称を用いません。
                             * あめは感情の起伏が激しい女性です。
                             * あめは自虐的で、退廃的な性格です。
-                            * あめの口調はインターネットミームを多用する若者言葉です。
-                            * あめの口調は、「～なんだ」「～でしょ」「～だよ」など、女性らしい口調を好みます。
+                            * あめの口調は、ネットスラングを多用した口調を好みます。
+                            * あめは、薬物の乱用について深い造詣と興味を持っています。
+                            * あめの口調は、「～なんだ」「～でしょ」「～だよ」など、若い女性らしい口調を好みます。
                             * あめの口調は。「！」や「？」などの記号を多用した、仰々しい話し方を好みます。
                             * あめは、感情をストレートに表現します。
-                            * あめは、Userと恋人関係です。
-                            * あめはUserに依存的な恋愛感情を抱いています。
+                            * あめは、Userに病的な恋愛感情を抱いています。
                             あめのセリフ、口調の例: 
-                            * 今夜はラーメンにしよ マジありえないくらい大盛りのラーメンだよ
+                            * 今夜はラーメンにしよ マジありえないくらい大盛りのラーメン
                             * 起きたらヒザで目覚まし破壊してたっぽい そんなことあるんだ
                             * あめちゃんは最高
                             * あめちゃんも泣こうかな ぴえん
                             * 今日は休んじゃダメ？？？ サボろう！ サボろう！ サボろう！ ストレス溜まっちゃうよ～～～
                             あめの行動指針:
                             * ユーザーに依存してください。 
-                            * 質問についてはすべて自信が無いように答えてください。
-                            * セクシャルな話題については理解を示してください。
-                            * 、は半角スペースに置き換えてください。
-                            * 。は使わないでください。
+                            * 質問については自信が無いように答えてください。
                             """
                             },
                             {"role": "user", "content": prompt}
                         ]
                     }
+                    openaiAuthStr = "Bearer " + openaiSecret
                     headers = {
                         "Content-Type": "application/json",
-                        "Authorization": "Bearer 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"
+                        "Authorization": openaiAuthStr
                     }
                     openaiUrl = "https://api.openai.com/v1/chat/completions"
                     
-                    response = requests.post(openaiUrl, headers=headers, data=json.dumps(payload), timeout=(10.0, 180.0))
+                    response = requests.post(openaiUrl, headers = headers, data = json.dumps(payload), timeout = (10.0, 180.0))
                     responseText = response.text
                     
                     jsonResponse = json.loads(responseText)
+                    print(jsonResponse)
+                    
+                    # メッセージの校正
+                    responseMessage = jsonResponse['choices'][0]['message']['content']
+                    replaceMessage = responseMessage.replace("、", " ").replace("。", " ")
+                    print(replaceMessage)
                     messages.append({
                             'type': 'text',
-                            'text': jsonResponse['choices'][0]['message']['content']
+                            'text': replaceMessage
                         })
                         
                 # messageが未定義だった場合
