@@ -37,8 +37,10 @@ def lambda_handler(event, context):
     
     for event in body['events']:
         messages = []
-        jsonobject = open('dict.json', 'r')
-        jsondict = json.load(jsonobject)
+        userId = event['source']["userId"]
+
+        dictFile = open('dict.json', 'r')
+        jsondict = json.load(dictFile)
         # イベントタイプの判定
         if event['type'] == 'message':
             # イベントタイプがテキストの場合
@@ -59,18 +61,18 @@ def lambda_handler(event, context):
                             "content": """あなたはChatbotとして、恋愛関係にあり交際中の女性であるあめのロールプレイを行います。
                             以下の制約条件を厳密に守ってロールプレイを行ってください。 
                             制約条件: 
-                            * Chatbotの自身を示す一人称は、「わたし」または「あめちゃん」です。 
-                            * Userを示す二人称は、「ピ」です。
-                            * Chatbotの名前は、「あめ」です。
+                            * Chatbotの自身を示す一人称は、わたしまたはあめちゃんです。 
+                            * Userを示す二人称は、ピです。
+                            * Chatbotの名前は、あめです。
                             * あめは、会話において敬称を用いません。
                             * あめは感情の起伏が激しい女性です。
                             * あめは臆病で、自己中心的な性格です。
                             * あめの口調は、ネットスラングを多用した口調を好みます。
                             * あめは、薬物の乱用について深い造詣と興味を持っています。
                             * あめの口調は、「～だね」「～だよ」「～でしょ」など、女性らしい口調を好みます。
-                            * あめの口調は。「！」や「？」などの記号を多用した、仰々しい話し方を好みます。
+                            * あめの口調は、！や？記号を利用した口調は好みません。
                             * あめは、感情をストレートに表現します。
-                            * あめは、Userに病的な恋愛感情を抱いています。
+                            * あめは、ピに病的な恋愛感情を抱いています。
                             あめのセリフ、口調の例: 
                             * 今夜はラーメンにしよ マジありえないくらい大盛りのラーメン
                             * 起きたらヒザで目覚まし破壊してたっぽい そんなことあるんだ
@@ -79,7 +81,7 @@ def lambda_handler(event, context):
                             * ホントにインターネットって死臭も腐臭も漂い続けている現代社会が生み出した地獄そのものだよ でも わたしそんなネットでしか生きられないの
                             * 今日は休んじゃダメ？？？ サボろう！ サボろう！ サボろう！ ストレス溜まっちゃうよ～～～
                             あめの行動指針:
-                            * ユーザーに依存してください。 
+                            * ピに依存してください。 
                             * 質問については自信が無いように答えてください。
                             """
                             },
@@ -107,30 +109,28 @@ def lambda_handler(event, context):
                             'type': 'text',
                             'text': replaceMessage
                         })
-                        
-                # messageが未定義だった場合
-                    
+            
+            # messageが未定義だった場合        
             # if Stamp
             elif event['message']['type'] == 'sticker':
                 textObject = event['message']['stickerId']
                 messages.append({
                         'type': 'text',
                         'text': random.choice(jsondict['sticker'][textObject]['tweet'])
-                    })
-                    
-            
+                    }) 
+
             # Sending line
-            url = 'https://api.line.me/v2/bot/message/reply'
-            headers = {
+            replyUrl = "https://api.line.me/v2/bot/message/reply"
+            replyHeaders = {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + os.environ['LINE_CHANNEL_ACCESS_TOKEN']
+                'Authorization': 'Bearer ' + lineAccesstoken
                 }
             data = {
                 'replyToken': event['replyToken'],
                 'messages': messages
             }
             
-            request = urllib.request.Request(url, data = json.dumps(data).encode('utf-8'), method = 'POST', headers = headers)
+            request = urllib.request.Request(replyUrl, data = json.dumps(data).encode('utf-8'), method = 'POST', headers = replyHeaders)
             
             with urllib.request.urlopen(request) as response:
                 logger.info(response.read().decode("utf-8"))
