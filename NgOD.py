@@ -102,7 +102,7 @@ def proofread(text):
     print(proofreaded)
     return proofreaded
 
-    
+# lambda処理
 def lambda_handler(event, context):
     logger.info(event) 
     
