@@ -135,6 +135,7 @@ def lambda_handler(event, context):
                             'type': 'text',
                             'text': jsondict['services'][textObject]
                         })
+                    
                 # Service以外の場合
                 else:
                     print(textObject)
