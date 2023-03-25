@@ -1,4 +1,5 @@
 # あめちゃんを召喚するLINEBOT
+あの国民に愛された超大人気ゲームNeedy Girl OverdoseのヒロインあめちゃんっぽいナニカがLINEに召喚されます
 
 ## 前提
 - バックエンドはGCPではなくてAWS Lambdaを利用します。
